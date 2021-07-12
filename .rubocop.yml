@@ -1,5 +1,14 @@
+require:
+  - rubocop-minitest
+  - rubocop-rake
+
 AllCops:
-  TargetRubyVersion: 2.4
+  Exclude:
+    - 'bin/**'
+    - 'Rakefile'
+    - 'toycol.gemspec'
+  NewCops: enable
+  TargetRubyVersion: 3.0
 
 Style/StringLiterals:
   Enabled: true
