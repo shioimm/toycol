@@ -4,6 +4,7 @@ require:
 
 AllCops:
   Exclude:
+    - 'vendor/bundle/**/*'
     - 'bin/**'
     - 'Rakefile'
     - 'toycol.gemspec'
