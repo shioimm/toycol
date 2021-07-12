@@ -9,7 +9,7 @@ AllCops:
     - 'Rakefile'
     - 'toycol.gemspec'
   NewCops: enable
-  TargetRubyVersion: 3.0
+  TargetRubyVersion: 2.6
 
 Style/StringLiterals:
   Enabled: true
