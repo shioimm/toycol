@@ -91,4 +91,13 @@ class ProtocolTest < Minitest::Test
       error.message
     )
   end
+
+  def test_that_it_returns_query
+    Toycol::Protocol.run!("GET /posts?user_id=1")
+
+    assert_equal(
+      "user_id=1",
+      Toycol::Protocol.query
+    )
+  end
 end

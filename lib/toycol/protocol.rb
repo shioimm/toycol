@@ -85,6 +85,12 @@ module Toycol
         request_method
       end
 
+      def query
+        return unless (parse_query_block = request.instance_variable_get("@query"))
+
+        parse_query_block.call(request_message)
+      end
+
       private
 
       attr_reader :request_message
