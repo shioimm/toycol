@@ -100,4 +100,13 @@ class ProtocolTest < Minitest::Test
       Toycol::Protocol.query
     )
   end
+
+  def test_that_it_returns_input
+    Toycol::Protocol.run!("POST /posts\r\nThis is test.")
+
+    assert_equal(
+      "This is test.",
+      Toycol::Protocol.input
+    )
+  end
 end
