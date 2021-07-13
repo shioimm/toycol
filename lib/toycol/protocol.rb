@@ -61,6 +61,19 @@ module Toycol
         end
       end
 
+      def request_path
+        request_path = request.instance_variable_get("@path").call(request_message)
+
+        raise UnauthorizedRequestError, "This request path is too long" if request_path.size >= 2048
+
+        if request_path.scan(%r{[/\w\d\-_]}).size < request_path.size
+          raise UnauthorizedRequestError,
+                "This request path contains unauthorized character"
+        end
+
+        request_path
+      end
+
       private
 
       attr_reader :request_message

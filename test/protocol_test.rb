@@ -33,4 +33,40 @@ class ProtocolTest < Minitest::Test
       Toycol::Protocol.instance_variable_get("@protocol_name")
     )
   end
+
+  def test_that_it_returns_request_path
+    Toycol::Protocol.run!("GET /posts")
+
+    assert_equal(
+      "/posts",
+      Toycol::Protocol.request_path
+    )
+  end
+
+  def test_that_it_returns_error_when_size_is_too_long
+    Toycol::Protocol.run!("GET /#{"posts" * 2048}")
+
+    error = assert_raises Toycol::UnauthorizedRequestError do
+      Toycol::Protocol.request_path
+    end
+
+    assert_equal(
+      "This request path is too long",
+      error.message
+    )
+  end
+
+  def test_that_it_returns_error_when_contains_unauthorized_character
+    Toycol::Protocol.define(:test) { request.path { "/p+o+s+t+s" } }
+    Toycol::Protocol.run!("GET /p+o+s+t+s")
+
+    error = assert_raises Toycol::UnauthorizedRequestError do
+      Toycol::Protocol.request_path
+    end
+
+    assert_equal(
+      "This request path contains unauthorized character",
+      error.message
+    )
+  end
 end

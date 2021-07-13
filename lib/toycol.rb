@@ -6,4 +6,6 @@ require_relative "toycol/version"
 
 module Toycol
   class Error < StandardError; end
+
+  class UnauthorizedRequestError < Error; end
 end
