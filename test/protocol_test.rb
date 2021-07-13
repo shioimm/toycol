@@ -69,4 +69,26 @@ class ProtocolTest < Minitest::Test
       error.message
     )
   end
+
+  def test_that_it_returns_request_method
+    Toycol::Protocol.run!("GET /posts")
+
+    assert_equal(
+      "GET",
+      Toycol::Protocol.request_method
+    )
+  end
+
+  def test_that_it_returns_error_when_is_not_defined
+    Toycol::Protocol.run!("UNDEFINED /posts")
+
+    error = assert_raises Toycol::UndefinedRequestMethodError do
+      Toycol::Protocol.request_method
+    end
+
+    assert_equal(
+      "This request method is undefined",
+      error.message
+    )
+  end
 end

@@ -8,4 +8,6 @@ module Toycol
   class Error < StandardError; end
 
   class UnauthorizedRequestError < Error; end
+
+  class UndefinedRequestMethodError < Error; end
 end

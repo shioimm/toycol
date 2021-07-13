@@ -74,6 +74,17 @@ module Toycol
         request_path
       end
 
+      def request_method
+        @http_request_methods.concat @additional_request_methods if @additional_request_methods
+        request_method = request.instance_variable_get("@http_method").call(request_message)
+
+        unless @http_request_methods.include? request_method
+          raise UndefinedRequestMethodError, "This request method is undefined"
+        end
+
+        request_method
+      end
+
       private
 
       attr_reader :request_message
