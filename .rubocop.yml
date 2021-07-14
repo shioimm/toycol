@@ -11,6 +11,9 @@ AllCops:
   NewCops: enable
   TargetRubyVersion: 2.6
 
+Style/Documentation:
+  Enabled: false
+
 Style/StringLiterals:
   Enabled: true
   EnforcedStyle: double_quotes
@@ -21,6 +24,10 @@ Style/StringLiteralsInInterpolation:
 
 Layout/LineLength:
   Max: 120
+
+Metrics:
+  Exclude:
+    - lib/toycol/proxy.rb
 
 Metrics/AbcSize:
   Max: 30
