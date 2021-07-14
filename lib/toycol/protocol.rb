@@ -11,14 +11,17 @@ module Toycol
     @additional_request_methods = nil
 
     class << self
+      # For protocol definition
       def define(protocol_name = nil, &block)
         @definements[protocol_name] = block
       end
 
+      # For application which use the protocol
       def use(protocol_name)
         @protocol_name = protocol_name
       end
 
+      # For server which use the protocol
       def run!(message)
         @request_message = message.chomp
 
@@ -27,6 +30,7 @@ module Toycol
         instance_exec(@request_message, &block)
       end
 
+      # For protocol definition: Define custom status codes
       if RUBY_VERSION >= "2.7"
         def custom_status_codes(**custom_status_codes)
           @custom_status_codes = custom_status_codes
@@ -37,10 +41,12 @@ module Toycol
         end
       end
 
+      # For protocol definition: Define adding request methods
       def additional_request_methods(*additional_request_methods)
         @additional_request_methods = additional_request_methods
       end
 
+      # For protocol definition: Define how to parse the request message
       def request
         @request ||= Class.new do
           def self.path(&block)
@@ -61,6 +67,7 @@ module Toycol
         end
       end
 
+      # For server: Get the request path
       def request_path
         request_path = request.instance_variable_get("@path").call(request_message)
 
@@ -74,6 +81,7 @@ module Toycol
         request_path
       end
 
+      # For server: Get the request method
       def request_method
         @http_request_methods.concat @additional_request_methods if @additional_request_methods
         request_method = request.instance_variable_get("@http_method").call(request_message)
@@ -85,18 +93,21 @@ module Toycol
         request_method
       end
 
+      # For server: Get the query string
       def query
         return unless (parse_query_block = request.instance_variable_get("@query"))
 
         parse_query_block.call(request_message)
       end
 
+      # For server: Get the input body
       def input
         return unless (parsed_input_block = request.instance_variable_get("@input"))
 
         parsed_input_block.call(request_message)
       end
 
+      # For server: Get the message of status code
       def status_message(status)
         @http_status_codes.merge!(@custom_status_codes) if @custom_status_codes
 
