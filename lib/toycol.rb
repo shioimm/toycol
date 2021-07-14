@@ -10,4 +10,6 @@ module Toycol
   class UnauthorizedRequestError < Error; end
 
   class UndefinedRequestMethodError < Error; end
+
+  class UnknownStatusCodeError < Error; end
 end

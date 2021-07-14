@@ -97,6 +97,16 @@ module Toycol
         parsed_input_block.call(request_message)
       end
 
+      def status_message(status)
+        @http_status_codes.merge!(@custom_status_codes) if @custom_status_codes
+
+        unless (message = @http_status_codes[status])
+          raise UnknownStatusCodeError, "Application returns unknown status code"
+        end
+
+        message
+      end
+
       private
 
       attr_reader :request_message

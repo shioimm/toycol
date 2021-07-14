@@ -109,4 +109,35 @@ class ProtocolTest < Minitest::Test
       Toycol::Protocol.input
     )
   end
+
+  def test_that_it_returns_default_http_status_message
+    Toycol::Protocol.run!("GET /posts")
+
+    assert_equal(
+      "OK",
+      Toycol::Protocol.status_message(200)
+    )
+  end
+
+  def test_that_it_returns_custom_http_status_message
+    Toycol::Protocol.run!("GET /posts")
+
+    assert_equal(
+      "This is a test status code",
+      Toycol::Protocol.status_message(600)
+    )
+  end
+
+  def test_that_it_returns_error_when_status_code_is_not_defined
+    Toycol::Protocol.run!("GET /posts")
+
+    error = assert_raises Toycol::UnknownStatusCodeError do
+      Toycol::Protocol.status_message(700)
+    end
+
+    assert_equal(
+      "Application returns unknown status code",
+      error.message
+    )
+  end
 end
