@@ -77,5 +77,5 @@ module Toycol
     511 => "Network Authentication Required"
   }.freeze
 
-  UNIX_SOCKET_PATH = ENV["PROTOYCOL_SOCKET_PATH"] || "/tmp/protoycol.socket"
+  UNIX_SOCKET_PATH = ENV["TOYCOL_SOCKET_PATH"] || "/tmp/toycol.socket"
 end
