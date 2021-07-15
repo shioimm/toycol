@@ -1,0 +1,23 @@
+# frozen_string_literal: true
+
+Toycol::Protocol.define(:duck) do
+  custom_status_codes(
+    600 => "I'm afraid you are not a duck..."
+  )
+  additional_request_methods "OTHER"
+
+  request.path do |message|
+    %r{(?<path>/\w*)}.match(message)[:path]
+  end
+
+  request.query do |message|
+    /\?(?<query>.+)/.match(message) { |m| m[:query] }
+  end
+
+  request.http_method do |message|
+    case message.scan(/quack/).size
+    when 2 then "GET"
+    else "OTHER"
+    end
+  end
+end
