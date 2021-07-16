@@ -4,6 +4,8 @@ require "socket"
 
 module Toycol
   class Proxy
+    include Helper
+
     def initialize(host, port)
       @host           = host
       @port           = port
@@ -31,7 +33,7 @@ module Toycol
 
           begin
             puts "[Toycol] Received message:\n#{request.inspect.chomp}"
-            @protocol.run!(request)
+            safe_execution! { @protocol.run!(request) }
             assign_parsed_attributes!
 
             http_request_message = build_http_request_message

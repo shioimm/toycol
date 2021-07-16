@@ -12,13 +12,13 @@ class App
       [
         200,
         { "Content-Type" => "text/html" },
-        ["Hello, This app is running on Ruby like protocol."]
+        ["I love ruby!\n", "I love RubyKaigi!\n"]
       ]
     when "OTHER"
       [
         700,
         { "Content-Type" => "text/html" },
-        ["Sorry, but I'd like you to speak more like a Ruby programmer..."]
+        ["Sorry, but I'd like you to speak more like a Ruby programmer...\n"]
       ]
     end
   end

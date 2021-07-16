@@ -27,7 +27,7 @@ class App
     [
       200,
       { "Content-Type" => "text/html" },
-      ["quack quack, I am the No.1 duck"]
+      ["quack quack, I am the No.1 duck\n"]
     ]
   end
 
@@ -35,7 +35,7 @@ class App
     [
       200,
       { "Content-Type" => "text/html" },
-      ["quack quack, quack quack, quack, quack"]
+      ["quack quack, quack quack, quack, quack\n", "quack quack, I am the No.1 duck\n"]
     ]
   end
 
@@ -43,7 +43,7 @@ class App
     [
       200,
       { "Content-Type" => "text/html" },
-      ["Hello, This app is running on Sample duck protocol."]
+      ["Hello, This app is running on Sample duck protocol.\n"]
     ]
   end
 
@@ -51,7 +51,7 @@ class App
     [
       600,
       { "Content-Type" => "text/html" },
-      ["Sorry, this application is only for ducks..."]
+      ["Sorry, this application is only for ducks...\n"]
     ]
   end
 end
