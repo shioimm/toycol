@@ -35,7 +35,7 @@ module Toycol
             assign_parsed_attributes!
 
             http_request_message = build_http_request_message
-            puts "[Toycol] Message has been translated to HTTP request message:\n#{http_request_message.inspect}"
+            puts "[Toycol] Message has been translated to HTTP request message:\n=> #{http_request_message.inspect}"
             transfer_to_server(http_request_message)
           rescue StandardError => e
             puts "#{e.class} #{e.message} - closing socket."
@@ -88,6 +88,13 @@ module Toycol
         while !server.closed? && !server.eof?
           message = server.read_nonblock(1024)
           puts "[Toycol] Received response message from server:\n#{message.lines.first.inspect}"
+
+          _, status_code, status_message = message.lines.first.split
+
+          if (custom_message = @protocol.status_message(status_code.to_i)) != status_message
+            message = message.sub(status_message, custom_message)
+            puts "[Toycol] Status message has been translated to custom status message:\n=> #{custom_message.inspect}"
+          end
 
           begin
             @client.write message

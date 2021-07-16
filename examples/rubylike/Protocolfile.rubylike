@@ -1,6 +1,6 @@
 Toycol::Protocol.define(:rubylike) do
   custom_status_codes(
-    600 => "Hmm...",
+    700 => "Hmm...",
   )
 
   additional_request_methods "OTHER"
