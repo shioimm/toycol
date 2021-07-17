@@ -32,7 +32,7 @@ module Toycol
           request = @client.readpartial(1024)
 
           begin
-            puts "[Toycol] Received message:\n#{request.inspect.chomp}"
+            puts "[Toycol] Received message:\n=> #{request.inspect.chomp}"
             safe_execution! { @protocol.run!(request) }
             assign_parsed_attributes!
 
@@ -52,9 +52,6 @@ module Toycol
 
     private
 
-    NEWLINE = "\r\n"
-    private_constant :NEWLINE
-
     def assign_parsed_attributes!
       @request_method = @protocol.request_method
       @path  = @protocol.request_path
@@ -63,8 +60,8 @@ module Toycol
     end
 
     def build_http_request_message
-      request_message = request_line + request_header + NEWLINE
-      request_message.concat(@input + NEWLINE) if @input
+      request_message = "#{request_line}#{request_header}\r\n"
+      request_message.concat(@input) if @input
       request_message
     end
 
