@@ -32,12 +32,12 @@ module Toycol
           request = @client.readpartial(1024)
 
           begin
-            puts "[Toycol] Received message:\n=> #{request.inspect.chomp}"
+            puts "[Toycol] Received message: #{request.inspect.chomp}"
             safe_execution! { @protocol.run!(request) }
             assign_parsed_attributes!
 
             http_request_message = build_http_request_message
-            puts "[Toycol] Message has been translated to HTTP request message:\n=> #{http_request_message.inspect}"
+            puts "[Toycol] Message has been translated to HTTP request message: #{http_request_message.inspect}"
             transfer_to_server(http_request_message)
           rescue StandardError => e
             puts "#{e.class} #{e.message} - closing socket."
@@ -85,18 +85,18 @@ module Toycol
         puts "[Toycol] Successed to Send HTTP request message to server"
 
         while !server.closed? && !server.eof?
-          message = server.read_nonblock(1024)
-          puts "[Toycol] Received response message from server:\n#{message.lines.first.inspect}"
+          response_message = server.read_nonblock(1024)
+          puts "[Toycol] Received response message from server: #{response_message.lines.first}"
 
-          _, status_code, status_message = message.lines.first.split
+          _, status_code, status_message = response_message.lines.first.split
 
           if (custom_message = @protocol.status_message(status_code.to_i)) != status_message
-            message = message.sub(status_message, custom_message)
-            puts "[Toycol] Status message has been translated to custom status message:\n=> #{custom_message.inspect}"
+            response_message = response_message.sub(status_message, custom_message)
+            puts "[Toycol] Status message has been translated to custom status message: #{custom_message}"
           end
 
           begin
-            @client.write message
+            @client.write response_message
           rescue StandardError => e
             puts "[Toycol] #{e.class} #{e.message} - closing socket"
             e.backtrace.each { |l| puts "\t#{l}" }
@@ -104,6 +104,7 @@ module Toycol
             server.close
           end
         end
+        puts "[Toycol] Finished to response to client"
       end
     end
 
