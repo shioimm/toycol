@@ -27,9 +27,15 @@ module Toycol
 
         def create_option_parser
           OptionParser.new do |opt|
-            opt.banner = "Usage: toycol [options]"
+            opt.banner = "Usage: #{opt.program_name} [-h|--help] [-v|--version] <command> <args>"
+            display_adding_summary(opt)
 
-            opt.on("-v", "--version", "Show Toycol version") do
+            opt.on_head("-h", "--help", "Show this message") do
+              puts opt.help
+              exit
+            end
+
+            opt.on_head("-v", "--version", "Show Toycol version") do
               opt.version = Toycol::VERSION
               puts opt.ver
               exit
@@ -52,6 +58,20 @@ module Toycol
               ::Toycol::Client.port = n
             end
           end
+        end
+
+        def display_adding_summary(opt)
+          opt.separator ""
+          opt.separator "Client command options:"
+          client_command_help_messages.each do |command|
+            opt.separator [opt.summary_indent, command[:name].ljust(31), command[:summary]].join(" ")
+          end
+        end
+
+        def client_command_help_messages
+          [
+            { name: "client -p=PORT_NUMBER", summary: "Send request to server" }
+          ]
         end
       end
     end
