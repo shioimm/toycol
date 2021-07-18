@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "optparse"
+require_relative "./client"
 
 module Toycol
   class Command
@@ -8,6 +9,10 @@ module Toycol
       def self.parse!(argv)
         opt_parser = OptionParser.new do |opts|
           opts.banner = "Usage: toycol [options]"
+
+          opts.on("-c", "--client=REQUEST_MESSGAGE", "Sent request message to server") do |request_message|
+            ::Toycol::Client.execute!(request_message)
+          end
 
           opts.on("-v", "--version", "Show Toycol version") do
             opts.version = Toycol::VERSION
