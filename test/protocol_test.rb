@@ -1,19 +1,12 @@
 # frozen_string_literal: true
 
-require "test_helper"
+require_relative "test_helper"
 
 class ProtocolTest < Minitest::Test
-  def setup
-    Toycol::Protocol.define(:test) do
-      custom_status_codes(600 => "This is a test status code")
-      additional_request_methods "OTHER"
-      request.path  { |message| %r{(?<path>/\w*)}.match(message)[:path] }
-      request.query { |message| /\?(?<query>.+)/.match(message) { |m| m[:query] } }
-      request.http_method { |message| /^(?<http_method>\w+)\b/.match(message) { |m| m[:http_method] }.upcase }
-      request.input       { |message| message.lines.last }
-    end
+  include Helper
 
-    Toycol::Protocol.use(:test)
+  def setup
+    setup_test_protocol
   end
 
   def test_that_it_defines_protocol_name
