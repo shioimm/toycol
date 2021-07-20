@@ -17,6 +17,8 @@ module Toycol
       @proxy          = TCPServer.new(@host, @port)
     end
 
+    CHUNK_SIZE = 1024 * 16
+
     def start
       puts <<~MESSAGE
         Toycol is running on #{@host}:#{@port}
@@ -29,10 +31,10 @@ module Toycol
         @client = @proxy.accept
 
         while !@client.closed? && !@client.eof?
-          request = @client.readpartial(1024)
-
           begin
+            request = @client.readpartial(CHUNK_SIZE)
             puts "[Toycol] Received message: #{request.inspect.chomp}"
+
             safe_execution! { @protocol.run!(request) }
             assign_parsed_attributes!
 
@@ -43,10 +45,10 @@ module Toycol
             puts "#{e.class} #{e.message} - closing socket."
             e.backtrace.each { |l| puts "\t#{l}" }
             @proxy.close
-          ensure
             @client.close
           end
         end
+        @client.close
       end
     end
 
@@ -61,7 +63,7 @@ module Toycol
 
     def build_http_request_message
       request_message = "#{request_line}#{request_header}\r\n"
-      request_message.concat(@input) if @input
+      request_message += @input if @input
       request_message
     end
 
@@ -82,29 +84,25 @@ module Toycol
     def transfer_to_server(request_message)
       UNIXSocket.open(Toycol::UNIX_SOCKET_PATH) do |server|
         server.write request_message
+        server.close_write
         puts "[Toycol] Successed to Send HTTP request message to server"
 
-        while !server.closed? && !server.eof?
-          response_message = server.read_nonblock(1024)
-          puts "[Toycol] Received response message from server: #{response_message.lines.first}"
+        response_message = []
+        response_message << server.readpartial(CHUNK_SIZE) until server.eof?
+        response_message = response_message.join
+        puts "[Toycol] Received response message from server: #{response_message.lines.first}"
 
-          _, status_code, status_message = response_message.lines.first.split
+        _, status_code, status_message = response_message.lines.first.split
 
-          if (custom_message = @protocol.status_message(status_code.to_i)) != status_message
-            response_message = response_message.sub(status_message, custom_message)
-            puts "[Toycol] Status message has been translated to custom status message: #{custom_message}"
-          end
-
-          begin
-            @client.write response_message
-          rescue StandardError => e
-            puts "[Toycol] #{e.class} #{e.message} - closing socket"
-            e.backtrace.each { |l| puts "\t#{l}" }
-          ensure
-            server.close
-          end
+        if (custom_message = @protocol.status_message(status_code.to_i)) != status_message
+          response_message = response_message.sub(status_message, custom_message)
+          puts "[Toycol] Status message has been translated to custom status message: #{custom_message}"
         end
+
+        @client.write response_message
+        @client.close_write
         puts "[Toycol] Finished to response to client"
+        server.close
       end
     end
 
