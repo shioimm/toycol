@@ -24,16 +24,9 @@ module Helper
     socket.write(request_message)
 
     response_message = []
-    while !socket.closed? && !socket.eof?
-      begin
-        response_message << socket.read_nonblock(1024)
-      rescue StandardError => e
-        puts "#{e.class} #{e.message} - closing socket."
-        e.backtrace.each { |l| puts "\t#{l}" }
-      ensure
-        socket.close
-      end
-    end
+    response_message << socket.read_nonblock(1024 * 16) until socket.eof?
+    socket.close
+
     response_message.join
   end
 end

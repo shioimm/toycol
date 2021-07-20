@@ -5,6 +5,7 @@ require "socket"
 module Toycol
   class Client
     @port = 9292
+    CHUNK_SIZE = 1024 * 16
 
     class << self
       attr_writer :port
@@ -14,19 +15,13 @@ module Toycol
         socket.write(request_message)
         puts "[Toycol] Sent request message: #{request_message}\n---"
 
-        while !socket.closed? && !socket.eof?
-          response_message = socket.read_nonblock(1024)
-          puts "[Toycol] Received response message:\n\n"
+        response_message = []
+        response_message << socket.readpartial(CHUNK_SIZE) until socket.eof?
+        response_message = response_message.join
 
-          begin
-            puts response_message
-          rescue StandardError => e
-            puts "#{e.class} #{e.message} - closing socket."
-            e.backtrace.each { |l| puts "\t#{l}" }
-          ensure
-            socket.close
-          end
-        end
+        puts "[Toycol] Received response message:\n\n"
+        puts response_message
+        socket.close
       end
     end
   end
