@@ -20,13 +20,9 @@ module Helper
   end
 
   def execute_client(request_message, port:)
-    socket = TCPSocket.new("localhost", port)
-    socket.write(request_message)
-
-    response_message = []
-    response_message << socket.read_nonblock(1024 * 16) until socket.eof?
-    socket.close
-
-    response_message.join
+    ::Toycol::Client.port = port
+    ::Toycol::Client.execute!(request_message) do |response_message|
+      return response_message
+    end
   end
 end
