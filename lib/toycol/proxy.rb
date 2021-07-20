@@ -61,7 +61,7 @@ module Toycol
 
     def build_http_request_message
       request_message = "#{request_line}#{request_header}\r\n"
-      request_message.concat(@input) if @input
+      request_message += @input if @input
       request_message
     end
 
