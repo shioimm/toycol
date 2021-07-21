@@ -7,21 +7,32 @@ require "rack/handler/puma"
 module Rack
   module Handler
     class Toycol
-      def self.run(app, options = {})
-        if (child_pid = fork)
-          environment  = ENV["RACK_ENV"] || "development"
-          default_host = environment == "development" ? "localhost" : "0.0.0.0"
+      class << self
+        def run(app, options = {})
+          @app        = app
+          @host       = options[:Host] || ::Toycol::DEFAULT_HOST
+          @port       = options[:Port] || "9292"
+          @app_server = options[:appserver]
 
-          host = options.delete(:Host) || default_host
-          port = options.delete(:Port) || "9292"
+          if (child_pid = fork)
+            ::Toycol::Proxy.new(@host, @port).start
+            Process.waitpid(child_pid)
+          else
+            run_application_server
+          end
+        end
 
-          ::Toycol::Proxy.new(host, port).start
-          Process.waitpid(child_pid)
-        else
-          puts "Toycol starts Puma in single mode, listening on unix://#{::Toycol::UNIX_SOCKET_PATH}"
-          # TODO: Make it possible to switch between Puma and the built-in server
-          # Rack::Handler::Puma.run(app, **{ Host: ::Toycol::UNIX_SOCKET_PATH, Silent: true })
-          ::Toycol::Server.run(app, **{ Path: ::Toycol::UNIX_SOCKET_PATH, Port: options.delete(:Port) || "9292" })
+        private
+
+        def run_application_server
+          case @app_server
+          when "puma"
+            puts "Toycol starts Puma in single mode, listening on unix://#{::Toycol::UNIX_SOCKET_PATH}"
+            Rack::Handler::Puma.run(@app, **{ Host: ::Toycol::UNIX_SOCKET_PATH, Silent: true })
+          else
+            puts "Toycol starts build-in server, listening on unix://#{::Toycol::UNIX_SOCKET_PATH}"
+            ::Toycol::Server.run(@app, **{ Path: ::Toycol::UNIX_SOCKET_PATH, Port: @port })
+          end
         end
       end
     end
