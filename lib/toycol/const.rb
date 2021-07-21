@@ -78,6 +78,10 @@ module Toycol
     511 => "Network Authentication Required"
   }.freeze
 
+  # For environment
+  ENVIRONMENT  = ENV["RACK_ENV"] || "development"
+  DEFAULT_HOST = ENVIRONMENT == "development" ? "localhost" : "0.0.0.0"
+
   # For connection from proxy server to app server
   UNIX_SOCKET_PATH = ENV["TOYCOL_SOCKET_PATH"] || "/tmp/toycol.socket"
 
