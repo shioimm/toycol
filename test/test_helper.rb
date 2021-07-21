@@ -13,7 +13,7 @@ module Helper
       request.path  { |message| %r{(?<path>/\w*)}.match(message)[:path] }
       request.query { |message| /\?(?<query>.+)/.match(message) { |m| m[:query] } }
       request.http_method { |message| /^(?<http_method>\w+)\b/.match(message) { |m| m[:http_method] }.upcase }
-      request.input       { |message| message.lines.last }
+      request.input       { |message| message.lines.size > 1 ? message.lines.last : nil }
     end
 
     Toycol::Protocol.use(:test)
