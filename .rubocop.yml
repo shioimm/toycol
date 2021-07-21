@@ -14,6 +14,10 @@ AllCops:
 Style/Documentation:
   Enabled: false
 
+Style/StringConcatenation:
+  Exclude:
+    - lib/toycol/server.rb
+
 Style/StringLiterals:
   Enabled: true
   EnforcedStyle: double_quotes
@@ -25,9 +29,14 @@ Style/StringLiteralsInInterpolation:
 Layout/LineLength:
   Max: 120
 
+Layout/HashAlignment:
+  Exclude:
+    - lib/toycol/server.rb
+
 Metrics:
   Exclude:
     - lib/toycol/proxy.rb
+    - lib/toycol/server.rb
 
 Metrics/AbcSize:
   Max: 30
