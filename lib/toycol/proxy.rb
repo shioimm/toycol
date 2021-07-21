@@ -92,9 +92,11 @@ module Toycol
         response_message = response_message.join
         puts "[Toycol] Received response message from server: #{response_message.lines.first}"
 
-        _, status_code, status_message = response_message.lines.first.split
+        response_line  = response_message.lines.first
+        status_number  = response_line[9..11]
+        status_message = response_line[12..].strip
 
-        if (custom_message = @protocol.status_message(status_code.to_i)) != status_message
+        if (custom_message = @protocol.status_message(status_number.to_i)) != status_message
           response_message = response_message.sub(status_message, custom_message)
           puts "[Toycol] Status message has been translated to custom status message: #{custom_message}"
         end
