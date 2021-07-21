@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "rack"
 require "rack/handler"
 require "rack/handler/puma"
 
@@ -18,7 +19,9 @@ module Rack
           Process.waitpid(child_pid)
         else
           puts "Toycol starts Puma in single mode, listening on unix://#{::Toycol::UNIX_SOCKET_PATH}"
-          Rack::Handler::Puma.run(app, **{ Host: ::Toycol::UNIX_SOCKET_PATH, Silent: true })
+          # TODO: Make it possible to switch between Puma and the built-in server
+          # Rack::Handler::Puma.run(app, **{ Host: ::Toycol::UNIX_SOCKET_PATH, Silent: true })
+          ::Toycol::Server.run(app, **{ Path: ::Toycol::UNIX_SOCKET_PATH, Port: options.delete(:Port) || "9292" })
         end
       end
     end
