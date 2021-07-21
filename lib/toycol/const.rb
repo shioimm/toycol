@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module Toycol
+  # For HTTP Protocol
   DEFAULT_HTTP_REQUEST_METHODS = %w[
     GET
     HEAD
@@ -77,5 +78,21 @@ module Toycol
     511 => "Network Authentication Required"
   }.freeze
 
+  # For connection from proxy server to app server
   UNIX_SOCKET_PATH = ENV["TOYCOL_SOCKET_PATH"] || "/tmp/toycol.socket"
+
+  # Rack compartible environment
+  PATH_INFO         = "PATH_INFO"
+  QUERY_STRING      = "QUERY_STRING"
+  REQUEST_METHOD    = "REQUEST_METHOD"
+  SERVER_NAME       = "SERVER_NAME"
+  SERVER_PORT       = "SERVER_PORT"
+  CONTENT_LENGTH    = "CONTENT_LENGTH"
+  RACK_VERSION      = "rack.version"
+  RACK_INPUT        = "rack.input"
+  RACK_ERRORS       = "rack.errors"
+  RACK_MULTITHREAD  = "rack.multithread"
+  RACK_MULTIPROCESS = "rack.multiprocess"
+  RACK_RUN_ONCE     = "rack.run_once"
+  RACK_URL_SCHEME   = "rack.url_scheme"
 end
