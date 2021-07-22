@@ -2,7 +2,6 @@
 
 require "rack"
 require "rack/handler"
-require "rack/handler/puma"
 
 module Rack
   module Handler
@@ -12,7 +11,7 @@ module Rack
           @app        = app
           @host       = options[:Host] || ::Toycol::DEFAULT_HOST
           @port       = options[:Port] || "9292"
-          @app_server = options[:appserver]
+          @app_server = select_application_server(options[:appserver])
 
           if (child_pid = fork)
             ::Toycol::Proxy.new(@host, @port).start
@@ -23,6 +22,27 @@ module Rack
         end
 
         private
+
+        def select_application_server(server_name = nil)
+          case server_name
+          when "puma"
+            return "puma" if puma_requireable?
+
+            puts "Puma is not installed in your environment."
+            raise LoadError
+          when nil
+            puma_requireable? ? "puma" : "build_in"
+          else
+            "build_in"
+          end
+        end
+
+        def puma_requireable?
+          require "rack/handler/puma"
+          true
+        rescue LoadError
+          false
+        end
 
         def run_application_server
           case @app_server
