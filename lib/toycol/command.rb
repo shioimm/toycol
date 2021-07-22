@@ -47,6 +47,8 @@ module Toycol
           sub_command_parser = Hash.new { |_k, v| raise ArgumentError, "'#{v}' is not sub command" }
           sub_command_parser["client"] = client_option_parser
           sub_command_parser["c"]      = client_option_parser
+          sub_command_parser["server"] = server_option_parser
+          sub_command_parser["s"]      = server_option_parser
           sub_command_parser
         end
 
@@ -60,17 +62,37 @@ module Toycol
           end
         end
 
+        def server_option_parser
+          OptionParser.new do |opt|
+            opt.on("-u=SERVER_NAME", "--use=SERVER_NAME", "Switch background server") do |server_name|
+              ::Rack::Handler::Toycol.preferred_background_server = server_name
+            end
+          end
+        end
+
         def display_adding_summary(opt)
           opt.separator ""
           opt.separator "Client command options:"
-          client_command_help_messages.each do |command|
-            opt.separator [opt.summary_indent, command[:name].ljust(31), command[:summary]].join(" ")
-          end
+          client_command_help_messages.each { |command| display_addimg_summary_line(opt, command) }
+
+          opt.separator ""
+          opt.separator "Server command options:"
+          server_command_help_messages.each { |command| display_addimg_summary_line(opt, command) }
+        end
+
+        def display_addimg_summary_line(opt, command)
+          opt.separator [opt.summary_indent, command[:name].ljust(31), command[:summary]].join(" ")
         end
 
         def client_command_help_messages
           [
             { name: "client -p=PORT_NUMBER", summary: "Send request to server" }
+          ]
+        end
+
+        def server_command_help_messages
+          [
+            { name: "server --use=SERVER_NAME", summary: "Start proxy & background server" }
           ]
         end
       end
@@ -89,7 +111,11 @@ module Toycol
       command = options.delete(:command)
 
       case command
-      when "client", "c" then ::Toycol::Client.execute!(options[:request_message])
+      when "client", "c"
+        ::Toycol::Client.execute!(options[:request_message])
+      when "server", "s"
+        ARGV.push("-q", "-s", "toycol")
+        Rack::Server.start
       end
     end
   end
