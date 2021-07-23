@@ -73,6 +73,14 @@ module Toycol
 
         def server_option_parser
           OptionParser.new do |opt|
+            opt.on("-o HOST", "--host HOST", "bind to HOST (default: localhost)") do |host|
+              ::Rack::Handler::Toycol.host = host
+            end
+
+            opt.on("-p PORT_NUMBER", "--port PORT_NUMBER", "listen on PORT (default: 9292)") do |port|
+              ::Rack::Handler::Toycol.port = port
+            end
+
             opt.on("-u SERVER_NAME", "--use SERVER_NAME", "switch using SERVER(puma/build_in)") do |server_name|
               ::Rack::Handler::Toycol.preferred_background_server = server_name
             end

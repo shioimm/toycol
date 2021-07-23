@@ -7,12 +7,12 @@ module Rack
   module Handler
     class Toycol
       class << self
-        attr_writer :preferred_background_server
+        attr_writer :preferred_background_server, :host, :port
 
-        def run(app, options = {})
-          @app  = app
-          @host = options[:Host] || ::Toycol::DEFAULT_HOST
-          @port = options[:Port] || "9292"
+        def run(app, _ = {})
+          @app = app
+          @host ||= ::Toycol::DEFAULT_HOST
+          @port ||= "9292"
 
           if (child_pid = fork)
             ::Toycol::Proxy.new(@host, @port).start
