@@ -55,7 +55,7 @@ module Toycol
         ::Toycol::REQUEST_METHOD    => "",
         ::Toycol::SERVER_NAME       => "toycol_server",
         ::Toycol::SERVER_PORT       => @port.to_s,
-        ::Toycol::CONTENT_LENGTH    => "",
+        ::Toycol::CONTENT_LENGTH    => "0",
         ::Toycol::RACK_VERSION      => Rack::VERSION,
         ::Toycol::RACK_INPUT        => stringio(""),
         ::Toycol::RACK_ERRORS       => $stderr,
@@ -108,16 +108,17 @@ module Toycol
       request_method, request_path, = request_line.split
       request_path, query_string    = request_path.split("?")
 
-      @env[REQUEST_METHOD] = request_method
-      @env[PATH_INFO]      = request_path
-      @env[QUERY_STRING]   = query_string || ""
+      @env[::Toycol::REQUEST_METHOD] = request_method
+      @env[::Toycol::PATH_INFO]      = request_path
+      @env[::Toycol::QUERY_STRING]   = query_string || ""
+      @env[::Toycol::CONTENT_LENGTH]
 
       request_headers.each do |request_header|
         k, v = request_header.split(":").map(&:strip)
-        @env[k.tr("-", "_").upcase] = v
+        @env["::Toycol::#{k.tr("-", "_").upcase}"] = v
       end
 
-      @env[RACK_INPUT] = stringio(request_body)
+      @env[::Toycol::RACK_INPUT] = stringio(request_body)
     end
   end
 end
