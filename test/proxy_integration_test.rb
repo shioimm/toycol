@@ -19,7 +19,8 @@ class ProxyIntegrationTest < Minitest::Test
 
     @server_pid = fork do
       Process.setpgrp # To detach from current process group
-      ::Rack::Handler::Toycol.run(TestApp.new, { Port: 12_345 })
+      ::Rack::Handler::Toycol.port = 12_345
+      ::Rack::Handler::Toycol.run(TestApp.new)
     end
 
     sleep 1 # Wait for server to launch

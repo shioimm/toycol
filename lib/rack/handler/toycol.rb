@@ -7,24 +7,25 @@ module Rack
   module Handler
     class Toycol
       class << self
-        def run(app, options = {})
-          @app        = app
-          @host       = options[:Host] || ::Toycol::DEFAULT_HOST
-          @port       = options[:Port] || "9292"
-          @app_server = select_application_server(options[:appserver])
+        attr_writer :preferred_background_server, :host, :port
+
+        def run(app, _ = {})
+          @app = app
+          @host ||= ::Toycol::DEFAULT_HOST
+          @port ||= "9292"
 
           if (child_pid = fork)
             ::Toycol::Proxy.new(@host, @port).start
             Process.waitpid(child_pid)
           else
-            run_application_server
+            run_background_server
           end
         end
 
         private
 
-        def select_application_server(server_name = nil)
-          case server_name
+        def select_background_server
+          case @preferred_background_server
           when "puma"
             return "puma" if puma_requireable?
 
@@ -44,8 +45,8 @@ module Rack
           false
         end
 
-        def run_application_server
-          case @app_server
+        def run_background_server
+          case select_background_server
           when "puma"
             puts "Toycol starts Puma in single mode, listening on unix://#{::Toycol::UNIX_SOCKET_PATH}"
             Rack::Handler::Puma.run(@app, **{ Host: ::Toycol::UNIX_SOCKET_PATH, Silent: true })
