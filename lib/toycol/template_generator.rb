@@ -6,7 +6,7 @@ module Toycol
   class TemplateGenerator
     class << self
       def generate!(type:, name:)
-        raise StandardError, "This type of template can't be generated" unless valid? type
+        raise StandardError, "Unknown Type: This type of template can't be generated" unless valid? type
 
         case type.to_s
         when "app"      then new(name).generate_app_template!

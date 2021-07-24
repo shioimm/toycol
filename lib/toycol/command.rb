@@ -89,18 +89,6 @@ module Toycol
           end
         end
 
-        def client_command_help_messages
-          [
-            { name: "client -p=PORT_NUMBER", summary: "Send request to server" }
-          ]
-        end
-
-        def server_command_help_messages
-          [
-            { name: "server -u=SERVER_NAME", summary: "Start proxy & background server" }
-          ]
-        end
-
         def help_command(parser)
           puts parser.help
           exit
