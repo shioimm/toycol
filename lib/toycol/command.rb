@@ -6,22 +6,24 @@ require_relative "./client"
 module Toycol
   class Command
     class Options
+      @options = {}
+
       class << self
         def parse!(argv)
-          options       = {}
           option_parser = create_option_parser
           sub_command_option_parser = create_sub_command_option_parser
 
           begin
             option_parser.order!(argv)
-            options[:command]         = argv.shift
-            options[:request_message] = argv.shift if %w[client c].include?(options[:command]) && argv.first != "-h"
-            sub_command_option_parser[options[:command]].parse!(argv)
+            @options[:command]         = argv.shift
+            @options[:request_message] = argv.shift if %w[client c].include?(@options[:command]) && argv.first != "-h"
+            @options[:protocol_name]   = argv.shift if %w[geberate g].include?(@options[:command]) && argv.first != "-h"
+            sub_command_option_parser[@options[:command]].parse!(argv)
           rescue OptionParser::MissingArgument, OptionParser::InvalidOption, ArgumentError => e
             abort e.message
           end
 
-          options
+          @options
         end
 
         def create_option_parser
@@ -45,10 +47,12 @@ module Toycol
 
         def create_sub_command_option_parser
           sub_command_parser = Hash.new { |_k, v| raise ArgumentError, "'#{v}' is not sub command" }
-          sub_command_parser["client"] = client_option_parser
-          sub_command_parser["c"]      = client_option_parser
-          sub_command_parser["server"] = server_option_parser
-          sub_command_parser["s"]      = server_option_parser
+          sub_command_parser["client"]   = client_option_parser
+          sub_command_parser["c"]        = client_option_parser
+          sub_command_parser["server"]   = server_option_parser
+          sub_command_parser["s"]        = server_option_parser
+          sub_command_parser["generate"] = generator_option_parser
+          sub_command_parser["g"]        = generator_option_parser
           sub_command_parser
         end
 
@@ -57,7 +61,8 @@ module Toycol
         def sub_command_summaries
           [
             { name: "client REQUEST_MESSAGE -p PORT",  summary: "Send request message to server"    },
-            { name: "server -u SERVER_NAME",           summary: "Start proxy and background server" }
+            { name: "server -u SERVER_NAME",           summary: "Start proxy and background server" },
+            { name: "generate NAME -t TYPE",           summary: "Generate new protocol or Rack app" }
           ]
         end
 
@@ -89,6 +94,16 @@ module Toycol
           end
         end
 
+        def generator_option_parser
+          OptionParser.new do |opt|
+            opt.on("-t TYPE", "--type TYPE", "generate TYPE of template (default: :all)") do |type|
+              @options[:template_type] = type
+            end
+
+            opt.on_head("-h", "--help", "Show this message") { help_command(opt) }
+          end
+        end
+
         def help_command(parser)
           puts parser.help
           exit
@@ -114,6 +129,9 @@ module Toycol
       when "server", "s"
         ARGV.push("-q", "-s", "toycol")
         Rack::Server.start
+      when "generate", "g"
+        type = options[:template_type] || "all"
+        ::Toycol::TemplateGenerator.generate!(type: type, name: options[:protocol_name])
       end
     end
   end
