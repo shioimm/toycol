@@ -11,6 +11,7 @@ require_relative "rack/handler/toycol"
 
 Dir["#{FileUtils.pwd}/Protocolfile*"].sort.each { |f| load f }
 
+require_relative "toycol/template_generator"
 require_relative "toycol/command"
 require_relative "toycol/version"
 
