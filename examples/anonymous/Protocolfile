@@ -1,0 +1,13 @@
+Toycol::Protocol.define do
+  request.path do |message|
+    %r{(?<path>\/\w*)}.match(message)[:path]
+  end
+
+  request.query do |message|
+    %r{\?(?<query>.+)}.match(message) { |m| m[:query] }
+  end
+
+  request.http_method do |message|
+    "GET"
+  end
+end
