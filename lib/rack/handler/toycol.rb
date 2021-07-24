@@ -29,13 +29,15 @@ module Rack
           when "puma"
             return "puma" if puma_requireable?
 
-            puts "Puma is not installed in your environment."
-            raise LoadError
+            raise LoadError, "Puma is not installed in your environment."
           when nil
             puma_requireable? ? "puma" : "build_in"
           else
             "build_in"
           end
+        rescue LoadError
+          Process.kill(:INT, Process.ppid)
+          abort
         end
 
         def puma_requireable?
