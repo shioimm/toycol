@@ -1,20 +1,16 @@
 # frozen_string_literal: true
 
-require "fileutils"
-
 module Toycol
   class TemplateGenerator
     class << self
       def generate!(type:, name:)
         raise StandardError, "Unknown Type: This type of template can't be generated" unless valid? type
 
-        case type.to_s
-        when "app"      then new(name).generate_app_template!
-        when "protocol" then new(name).generate_protocol_template!
-        when "all"
-          generator = new(name)
-          generator.generate_app_template!
-          generator.generate_protocol_template!
+        if type == "all"
+          new(name, "protocol").generate!
+          new(name, "app").generate!
+        else
+          new(name, type).generate!
         end
       end
 
@@ -25,36 +21,40 @@ module Toycol
       end
     end
 
-    def initialize(name)
+    def initialize(name, type)
       @name = name
+      @type = type
     end
 
-    def generate_app_template!
-      filename = "config_#{@name}.ru"
-      File.open(filename, "w") { |f| f.print app_template_text }
-      puts "Generate #{filename} in #{FileUtils.pwd}"
-    end
+    def generate!
+      raise StandardError, "#{filename} already exists" unless Dir.glob(filename).empty?
 
-    def generate_protocol_template!
-      filename = "Protocolfile.#{@name}"
-
-      File.open(filename, "w") do |f|
-        text = protocol_template_text
-        text.sub!(":PROTOCOL_NAME", ":#{@name}")
-        f.print text
-      end
-
+      File.open(filename, "w") { |f| f.print template_text_for_new }
       puts "Generate #{filename} in #{FileUtils.pwd}"
     end
 
     private
 
-    def app_template_text
-      File.open("lib/toycol/templates/application.txt", "r", &:read)
+    def filename
+      @filename ||= case @type
+                    when "protocol" then "Protocolfile#{@name ? ".#{@name}" : nil}"
+                    when "app"      then "config#{@name ? "_#{@name}" : nil}.ru"
+                    end
     end
 
-    def protocol_template_text
-      File.open("lib/toycol/templates/protocol.txt", "r", &:read)
+    def template_text_for_new
+      if @name
+        template_text.sub(":PROTOCOL_NAME", ":#{@name}")
+      else
+        template_text.sub("\(:PROTOCOL_NAME\)", "")
+      end
+    end
+
+    def template_text
+      case @type
+      when "protocol" then File.open("lib/toycol/templates/protocol.txt",    "r", &:read)
+      when "app"      then File.open("lib/toycol/templates/application.txt", "r", &:read)
+      end
     end
   end
 end

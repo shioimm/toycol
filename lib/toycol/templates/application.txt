@@ -2,7 +2,7 @@ require "rack"
 require "toycol"
 
 # Specify which protocol to use
-Toycol::Protocol.use(:#{name})
+Toycol::Protocol.use(:PROTOCOL_NAME)
 
 class App
   def call(env)

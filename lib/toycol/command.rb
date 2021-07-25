@@ -2,6 +2,7 @@
 
 require "optparse"
 require_relative "./client"
+require_relative "./template_generator"
 
 module Toycol
   class Command
@@ -16,8 +17,8 @@ module Toycol
           begin
             option_parser.order!(argv)
             @options[:command]         = argv.shift
-            @options[:request_message] = argv.shift if %w[client c].include?(@options[:command]) && argv.first != "-h"
-            @options[:protocol_name]   = argv.shift if %w[geberate g].include?(@options[:command]) && argv.first != "-h"
+            @options[:request_message] = argv.shift if request_message?(argv.first)
+            @options[:protocol_name]   = argv.shift if protocol_name?(argv.first)
             sub_command_option_parser[@options[:command]].parse!(argv)
           rescue OptionParser::MissingArgument, OptionParser::InvalidOption, ArgumentError => e
             abort e.message
@@ -57,6 +58,18 @@ module Toycol
         end
 
         private
+
+        def request_message?(arg)
+          %w[client c].include?(@options[:command]) \
+            && arg != "-p" \
+            && arg != "-h"
+        end
+
+        def protocol_name?(arg)
+          %w[geberate g].include?(@options[:command]) \
+            && arg != "-t" \
+            && arg != "-h"
+        end
 
         def sub_command_summaries
           [
