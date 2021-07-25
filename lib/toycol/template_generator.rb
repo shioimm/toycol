@@ -4,7 +4,7 @@ module Toycol
   class TemplateGenerator
     class << self
       def generate!(type:, name:)
-        raise StandardError, "Unknown Type: This type of template can't be generated" unless valid? type
+        raise Toycol::Error, "Unknown Type: This type of template can't be generated" unless valid? type
 
         if type == "all"
           new(name, "protocol").generate!
@@ -27,7 +27,7 @@ module Toycol
     end
 
     def generate!
-      raise StandardError, "#{filename} already exists" unless Dir.glob(filename).empty?
+      raise Toycol::Error, "#{filename} already exists" unless Dir.glob(filename).empty?
 
       File.open(filename, "w") { |f| f.print template_text_for_new }
       puts "Generate #{filename} in #{FileUtils.pwd}"

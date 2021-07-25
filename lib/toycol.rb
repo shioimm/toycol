@@ -17,11 +17,9 @@ require_relative "toycol/version"
 module Toycol
   class Error < StandardError; end
 
-  class UnauthorizedMethodError < Error; end
+  class UnauthorizeError < Error; end
 
-  class UnauthorizedRequestError < Error; end
+  class UndefinementError < Error; end
 
-  class UndefinedRequestMethodError < Error; end
-
-  class UnknownStatusCodeError < Error; end
+  class HTTPError < Error; end
 end

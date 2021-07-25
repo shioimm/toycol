@@ -71,10 +71,10 @@ module Toycol
       def request_path
         request_path = request.instance_variable_get("@path").call(request_message)
 
-        raise UnauthorizedRequestError, "This request path is too long" if request_path.size >= 2048
+        raise Toycol::UnauthorizeError, "This request path is too long" if request_path.size >= 2048
 
         if request_path.scan(%r{[/\w\d\-_]}).size < request_path.size
-          raise UnauthorizedRequestError,
+          raise Toycol::UnauthorizeError,
                 "This request path contains unauthorized character"
         end
 
@@ -87,7 +87,7 @@ module Toycol
         request_method = request.instance_variable_get("@http_method").call(request_message)
 
         unless @http_request_methods.include? request_method
-          raise UndefinedRequestMethodError, "This request method is undefined"
+          raise Toycol::UndefinementError, "This request method is undefined"
         end
 
         request_method
@@ -112,7 +112,7 @@ module Toycol
         @http_status_codes.merge!(@custom_status_codes) if @custom_status_codes
 
         unless (message = @http_status_codes[status])
-          raise UnknownStatusCodeError, "Application returns unknown status code"
+          raise Toycol::HTTPError, "Application returns unknown status code"
         end
 
         message
