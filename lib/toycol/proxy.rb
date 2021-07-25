@@ -109,7 +109,7 @@ module Toycol
     end
 
     def shutdown
-      puts "[Toycol] Catched SIGINT -> Stop to server"
+      puts "[Toycol] Caught SIGINT -> Stop to server"
       exit
     end
   end
