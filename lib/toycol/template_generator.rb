@@ -52,8 +52,8 @@ module Toycol
 
     def template_text
       case @type
-      when "protocol" then File.open("lib/toycol/templates/protocol.txt",    "r", &:read)
-      when "app"      then File.open("lib/toycol/templates/application.txt", "r", &:read)
+      when "protocol" then File.open("#{__dir__}/templates/protocol.txt",    "r", &:read)
+      when "app"      then File.open("#{__dir__}/templates/application.txt", "r", &:read)
       end
     end
   end
