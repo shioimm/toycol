@@ -17,7 +17,7 @@ module Toycol
       end
 
       # For application which use the protocol
-      def use(protocol_name)
+      def use(protocol_name = nil)
         @protocol_name = protocol_name
       end
 
