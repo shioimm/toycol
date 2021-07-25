@@ -8,11 +8,11 @@ Toycol::Protocol.define(:PROTOCOL_NAME) do
 
   # [OPTIONAL] You can define your additional request methods:
   # For example:
-  # additional_request_methods OTHER
+  # additional_request_methods "OTHER"
 
   # [OPTIONAL] You can define your own response status code:
   # For example:
-  # define_status_codes(
+  # custom_status_codes(
   #   600 => "I'm afraid you are not a duck..."
   # )
 

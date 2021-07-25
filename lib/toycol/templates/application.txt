@@ -1,19 +1,24 @@
 require "rack"
 require "toycol"
 
-# Specify which protocol to use
 Toycol::Protocol.use(:PROTOCOL_NAME)
 
 class App
   def call(env)
     # Define your app on request method, request path, request query etc
     # For example:
-    # case env['REQUEST_METHOD']
-    # when 'GET'
+    # case env["REQUEST_METHOD"]
+    # when "GET"
     #   [
     #     200,
-    #     { 'Content-Type' => 'text/html' },
-    #     ["Hello, This app is running by :#{name} protocol."]
+    #     { "Content-Type" => "text/html" },
+    #     ["Hello, This app is running by new protocol."]
+    #   ]
+    # when "OTHER"
+    #   [
+    #     600,
+    #     { "Content-Type" => "text/html" },
+    #     ["This is response message for additional request method"]
     #   ]
     # end
   end
