@@ -21,7 +21,7 @@ module Toycol
 
     def start
       puts <<~MESSAGE
-        Toycol is running on #{@host}:#{@port}
+        [Toycol] Start proxy server running on #{@host}:#{@port}
         => Use Ctrl-C to stop
       MESSAGE
 
@@ -33,13 +33,13 @@ module Toycol
         while !@client.closed? && !@client.eof?
           begin
             request = @client.readpartial(CHUNK_SIZE)
-            puts "[Toycol] Received message: #{request.inspect.chomp}"
+            logger "Received message: #{request.inspect.chomp}"
 
             safe_execution! { @protocol.run!(request) }
             assign_parsed_attributes!
 
             http_request_message = build_http_request_message
-            puts "[Toycol] Message has been translated to HTTP request message: #{http_request_message.inspect}"
+            logger "Message has been translated to HTTP request message: #{http_request_message.inspect}"
             transfer_to_server(http_request_message)
           rescue StandardError => e
             puts "#{e.class} #{e.message} - closing socket."
@@ -85,12 +85,12 @@ module Toycol
       UNIXSocket.open(UNIX_SOCKET_PATH) do |server|
         server.write request_message
         server.close_write
-        puts "[Toycol] Successed to Send HTTP request message to server"
+        logger "Successed to Send HTTP request message to server"
 
         response_message = []
         response_message << server.readpartial(CHUNK_SIZE) until server.eof?
         response_message = response_message.join
-        puts "[Toycol] Received response message from server: #{response_message.lines.first}"
+        logger "Received response message from server: #{response_message.lines.first}"
 
         response_line  = response_message.lines.first
         status_number  = response_line[9..11]
@@ -98,18 +98,18 @@ module Toycol
 
         if (custom_message = @protocol.status_message(status_number.to_i)) != status_message
           response_message = response_message.sub(status_message, custom_message)
-          puts "[Toycol] Status message has been translated to custom status message: #{custom_message}"
+          logger "Status message has been translated to custom status message: #{custom_message}"
         end
 
         @client.write response_message
         @client.close_write
-        puts "[Toycol] Finished to response to client"
+        logger "Finished to response to client"
         server.close
       end
     end
 
     def shutdown
-      puts "[Toycol] Caught SIGINT -> Stop to server"
+      logger "Caught SIGINT -> Stop to server"
       exit
     end
   end

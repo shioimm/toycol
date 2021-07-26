@@ -2,6 +2,10 @@
 
 module Toycol
   module Helper
+    def logger(message)
+      puts "[Toycol] #{message}"
+    end
+
     private
 
     def safe_execution!(&block)
