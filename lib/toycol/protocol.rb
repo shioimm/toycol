@@ -13,6 +13,11 @@ module Toycol
     class << self
       # For protocol definition
       def define(protocol_name = nil, &block)
+        if @definements[protocol_name]
+          raise DuplicateProtocolError,
+                "#{protocol_name || "Anonymous"} protocol has already been defined"
+        end
+
         @definements[protocol_name] = block
       end
 

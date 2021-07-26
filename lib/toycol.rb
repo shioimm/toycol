@@ -8,9 +8,6 @@ require_relative "toycol/protocol"
 require_relative "toycol/proxy"
 require_relative "toycol/server"
 require_relative "rack/handler/toycol"
-
-Dir["#{FileUtils.pwd}/Protocolfile*"].sort.each { |f| load f }
-
 require_relative "toycol/command"
 require_relative "toycol/version"
 
@@ -21,5 +18,9 @@ module Toycol
 
   class UndefinementError < Error; end
 
+  class DuplicateProtocolError < Error; end
+
   class HTTPError < Error; end
 end
+
+Dir["#{FileUtils.pwd}/Protocolfile*"].sort.each { |f| load f }

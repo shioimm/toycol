@@ -7,7 +7,9 @@ require "minitest/autorun"
 
 module Helper
   def setup_test_protocol
-    Toycol::Protocol.define(:test) do
+    protocol_name = "test_#{rand((999..999_999).to_a.sample)}".to_sym
+
+    Toycol::Protocol.define(protocol_name) do
       custom_status_codes(600 => "This is a test status code")
       additional_request_methods "OTHER"
       request.path  { |message| %r{(?<path>/\w*)}.match(message)[:path] }
@@ -16,7 +18,7 @@ module Helper
       request.input       { |message| message.lines.size > 1 ? message.lines.last : nil }
     end
 
-    Toycol::Protocol.use(:test)
+    Toycol::Protocol.use(protocol_name)
   end
 
   def execute_client(request_message, port:)
