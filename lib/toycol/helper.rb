@@ -10,8 +10,8 @@ module Toycol
 
     def safe_executionable_tp
       @safe_executionable_tp ||= TracePoint.new(:script_compiled) do |tp|
-        if tp.binding.receiver == Toycol::Protocol && tp.method_id.to_s.match?(unauthorized_methods_regex)
-          raise Toycol::UnauthorizedMethodError, <<~ERROR
+        if tp.binding.receiver == Protocol && tp.method_id.to_s.match?(unauthorized_methods_regex)
+          raise UnauthorizeError, <<~ERROR
             - Unauthorized method was called!
             You can't use methods that may cause injections in your protocol.
             Ex. Kernel.#eval, Kernel.#exec, Kernel.#require and so on.

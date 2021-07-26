@@ -39,7 +39,7 @@ class ProtocolTest < Minitest::Test
   def test_that_it_returns_error_when_size_is_too_long
     Toycol::Protocol.run!("GET /#{"posts" * 2048}")
 
-    error = assert_raises Toycol::UnauthorizedRequestError do
+    error = assert_raises Toycol::UnauthorizeError do
       Toycol::Protocol.request_path
     end
 
@@ -53,7 +53,7 @@ class ProtocolTest < Minitest::Test
     Toycol::Protocol.define(:test) { request.path { "/p+o+s+t+s" } }
     Toycol::Protocol.run!("GET /p+o+s+t+s")
 
-    error = assert_raises Toycol::UnauthorizedRequestError do
+    error = assert_raises Toycol::UnauthorizeError do
       Toycol::Protocol.request_path
     end
 
@@ -75,7 +75,7 @@ class ProtocolTest < Minitest::Test
   def test_that_it_returns_error_when_is_not_defined
     Toycol::Protocol.run!("UNDEFINED /posts")
 
-    error = assert_raises Toycol::UndefinedRequestMethodError do
+    error = assert_raises Toycol::UndefinementError do
       Toycol::Protocol.request_method
     end
 
@@ -124,7 +124,7 @@ class ProtocolTest < Minitest::Test
   def test_that_it_returns_error_when_status_code_is_not_defined
     Toycol::Protocol.run!("GET /posts")
 
-    error = assert_raises Toycol::UnknownStatusCodeError do
+    error = assert_raises Toycol::HTTPError do
       Toycol::Protocol.status_message(700)
     end
 

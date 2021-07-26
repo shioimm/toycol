@@ -50,19 +50,19 @@ module Toycol
 
     def default_env
       {
-        ::Toycol::PATH_INFO         => "",
-        ::Toycol::QUERY_STRING      => "",
-        ::Toycol::REQUEST_METHOD    => "",
-        ::Toycol::SERVER_NAME       => "toycol_server",
-        ::Toycol::SERVER_PORT       => @port.to_s,
-        ::Toycol::CONTENT_LENGTH    => "0",
-        ::Toycol::RACK_VERSION      => Rack::VERSION,
-        ::Toycol::RACK_INPUT        => stringio(""),
-        ::Toycol::RACK_ERRORS       => $stderr,
-        ::Toycol::RACK_MULTITHREAD  => false,
-        ::Toycol::RACK_MULTIPROCESS => false,
-        ::Toycol::RACK_RUN_ONCE     => false,
-        ::Toycol::RACK_URL_SCHEME   => "http"
+        PATH_INFO         => "",
+        QUERY_STRING      => "",
+        REQUEST_METHOD    => "",
+        SERVER_NAME       => "toycol_server",
+        SERVER_PORT       => @port.to_s,
+        CONTENT_LENGTH    => "0",
+        RACK_VERSION      => Rack::VERSION,
+        RACK_INPUT        => stringio(""),
+        RACK_ERRORS       => $stderr,
+        RACK_MULTITHREAD  => false,
+        RACK_MULTIPROCESS => false,
+        RACK_RUN_ONCE     => false,
+        RACK_URL_SCHEME   => "http"
       }
     end
 
@@ -71,7 +71,7 @@ module Toycol
     end
 
     def response_status_code
-      "HTTP/1.1 #{@returned_status} #{::Toycol::DEFAULT_HTTP_STATUS_CODES[@returned_status.to_i] || "CUSTOM"}\r\n"
+      "HTTP/1.1 #{@returned_status} #{DEFAULT_HTTP_STATUS_CODES[@returned_status.to_i] || "CUSTOM"}\r\n"
     end
 
     def response_headers
@@ -108,17 +108,17 @@ module Toycol
       request_method, request_path, = request_line.split
       request_path, query_string    = request_path.split("?")
 
-      @env[::Toycol::REQUEST_METHOD] = request_method
-      @env[::Toycol::PATH_INFO]      = request_path
-      @env[::Toycol::QUERY_STRING]   = query_string || ""
-      @env[::Toycol::CONTENT_LENGTH]
+      @env[REQUEST_METHOD] = request_method
+      @env[PATH_INFO]      = request_path
+      @env[QUERY_STRING]   = query_string || ""
+      @env[CONTENT_LENGTH]
 
       request_headers.each do |request_header|
         k, v = request_header.split(":").map(&:strip)
-        @env["::Toycol::#{k.tr("-", "_").upcase}"] = v
+        @env[k.tr("-", "_").upcase.to_s] = v
       end
 
-      @env[::Toycol::RACK_INPUT] = stringio(request_body)
+      @env[RACK_INPUT] = stringio(request_body)
     end
   end
 end

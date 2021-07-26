@@ -81,8 +81,9 @@ module Toycol
 
         def client_option_parser
           OptionParser.new do |opt|
+            opt.banner = "Usage: #{opt.program_name} client [-h|--help] REQUEST_MESSAGE [arg...]"
             opt.on("-p PORT_NUMBER", "--port PORT_NUMBER", "listen on PORT (default: 9292)") do |port|
-              ::Toycol::Client.port = port
+              Client.port = port
             end
 
             opt.on_head("-h", "--help", "Show this message") { help_command(opt) }
@@ -91,6 +92,7 @@ module Toycol
 
         def server_option_parser
           OptionParser.new do |opt|
+            opt.banner = "Usage: #{opt.program_name} server [-h|--help] APPLICATION_PATH [arg...]"
             opt.on("-o HOST", "--host HOST", "bind to HOST (default: localhost)") do |host|
               ::Rack::Handler::Toycol.host = host
             end
@@ -138,13 +140,13 @@ module Toycol
 
       case command
       when "client", "c"
-        ::Toycol::Client.execute!(options[:request_message])
+        Client.execute!(options[:request_message])
       when "server", "s"
         ARGV.push("-q", "-s", "toycol")
         Rack::Server.start
       when "generate", "g"
         type = options[:template_type] || "all"
-        ::Toycol::TemplateGenerator.generate!(type: type, name: options[:protocol_name])
+        TemplateGenerator.generate!(type: type, name: options[:protocol_name])
       end
     end
   end
