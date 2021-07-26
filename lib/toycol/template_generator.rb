@@ -2,6 +2,8 @@
 
 module Toycol
   class TemplateGenerator
+    include Helper
+
     class << self
       def generate!(type:, name:)
         raise Error, "Unknown Type: This type of template can't be generated" unless valid? type
@@ -30,7 +32,7 @@ module Toycol
       raise Error, "#{filename} already exists" unless Dir.glob(filename).empty?
 
       File.open(filename, "w") { |f| f.print template_text_for_new }
-      puts "Generate #{filename} in #{FileUtils.pwd}"
+      logger "Generate #{filename} in #{FileUtils.pwd}"
     end
 
     private
