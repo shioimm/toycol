@@ -13,7 +13,7 @@ module Toycol
       @path           = nil
       @query          = nil
       @input          = nil
-      @protocol       = ::Toycol::Protocol
+      @protocol       = Protocol
       @proxy          = TCPServer.new(@host, @port)
     end
 
@@ -82,7 +82,7 @@ module Toycol
     end
 
     def transfer_to_server(request_message)
-      UNIXSocket.open(Toycol::UNIX_SOCKET_PATH) do |server|
+      UNIXSocket.open(UNIX_SOCKET_PATH) do |server|
         server.write request_message
         server.close_write
         puts "[Toycol] Successed to Send HTTP request message to server"
