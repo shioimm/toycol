@@ -5,13 +5,14 @@ module Toycol
     extend Helper
 
     @port = 9292
+    @host = "localhost"
     CHUNK_SIZE = 1024 * 16
 
     class << self
-      attr_writer :port
+      attr_writer :port, :host
 
       def execute!(request_message, &block)
-        socket = TCPSocket.new("localhost", @port)
+        socket = TCPSocket.new(@host, @port)
         socket.write(request_message)
         logger "Sent request message: #{request_message}\n---"
 

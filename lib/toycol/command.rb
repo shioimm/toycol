@@ -78,7 +78,11 @@ module Toycol
         def client_option_parser
           OptionParser.new do |opt|
             opt.banner = "Usage: #{opt.program_name} client [-h|--help] REQUEST_MESSAGE [arg...]"
-            opt.on("-p PORT_NUMBER", "--port PORT_NUMBER", "listen on PORT (default: 9292)") do |port|
+            opt.on("-o HOST", "--host HOST", "connect to HOST (default: localhost)") do |host|
+              Client.host = host
+            end
+
+            opt.on("-p PORT_NUMBER", "--port PORT_NUMBER", "connect to PORT (default: 9292)") do |port|
               Client.port = port
             end
 
