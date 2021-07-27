@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require "optparse"
-require_relative "./client"
-require_relative "./template_generator"
-
 module Toycol
   class Command
     class Options
@@ -82,7 +78,11 @@ module Toycol
         def client_option_parser
           OptionParser.new do |opt|
             opt.banner = "Usage: #{opt.program_name} client [-h|--help] REQUEST_MESSAGE [arg...]"
-            opt.on("-p PORT_NUMBER", "--port PORT_NUMBER", "listen on PORT (default: 9292)") do |port|
+            opt.on("-o HOST", "--host HOST", "connect to HOST (default: localhost)") do |host|
+              Client.host = host
+            end
+
+            opt.on("-p PORT_NUMBER", "--port PORT_NUMBER", "connect to PORT (default: 9292)") do |port|
               Client.port = port
             end
 
@@ -101,7 +101,7 @@ module Toycol
               ::Rack::Handler::Toycol.port = port
             end
 
-            opt.on("-u SERVER_NAME", "--use SERVER_NAME", "switch using SERVER(puma/build_in)") do |server_name|
+            opt.on("-u SERVER_NAME", "--use SERVER_NAME", "switch using SERVER(puma/builtin)") do |server_name|
               ::Rack::Handler::Toycol.preferred_background_server = server_name
             end
 

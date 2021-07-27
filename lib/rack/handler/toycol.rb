@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rack"
 require "rack/handler"
 
 module Rack
@@ -29,20 +28,20 @@ module Rack
         def select_background_server
           case @preferred_background_server
           when "puma"
-            return "puma" if puma_requireable?
+            return "puma" if try_require_puma_handler
 
             raise LoadError, "Puma is not installed in your environment."
           when nil
-            puma_requireable? ? "puma" : "build_in"
+            try_require_puma_handler ? "puma" : "builtin"
           else
-            "build_in"
+            "builtin"
           end
         rescue LoadError
           Process.kill(:INT, Process.ppid)
           abort
         end
 
-        def puma_requireable?
+        def try_require_puma_handler
           require "rack/handler/puma"
           true
         rescue LoadError
@@ -55,7 +54,7 @@ module Rack
             logger "Start Puma in single mode, listening on unix://#{::Toycol::UNIX_SOCKET_PATH}"
             Rack::Handler::Puma.run(@app, **{ Host: ::Toycol::UNIX_SOCKET_PATH, Silent: true })
           else
-            logger "Start build-in server, listening on unix://#{::Toycol::UNIX_SOCKET_PATH}"
+            logger "Start built-in server, listening on unix://#{::Toycol::UNIX_SOCKET_PATH}"
             ::Toycol::Server.run(@app, **{ Path: ::Toycol::UNIX_SOCKET_PATH, Port: @port })
           end
         end
