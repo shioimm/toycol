@@ -97,7 +97,7 @@ module Toycol
               ::Rack::Handler::Toycol.port = port
             end
 
-            opt.on("-u SERVER_NAME", "--use SERVER_NAME", "switch using SERVER(puma/build_in)") do |server_name|
+            opt.on("-u SERVER_NAME", "--use SERVER_NAME", "switch using SERVER(puma/builtin)") do |server_name|
               ::Rack::Handler::Toycol.preferred_background_server = server_name
             end
 

@@ -32,9 +32,9 @@ module Rack
 
             raise LoadError, "Puma is not installed in your environment."
           when nil
-            puma_requireable? ? "puma" : "build_in"
+            puma_requireable? ? "puma" : "builtin"
           else
-            "build_in"
+            "builtin"
           end
         rescue LoadError
           Process.kill(:INT, Process.ppid)
@@ -54,7 +54,7 @@ module Rack
             logger "Start Puma in single mode, listening on unix://#{::Toycol::UNIX_SOCKET_PATH}"
             Rack::Handler::Puma.run(@app, **{ Host: ::Toycol::UNIX_SOCKET_PATH, Silent: true })
           else
-            logger "Start build-in server, listening on unix://#{::Toycol::UNIX_SOCKET_PATH}"
+            logger "Start built-in server, listening on unix://#{::Toycol::UNIX_SOCKET_PATH}"
             ::Toycol::Server.run(@app, **{ Path: ::Toycol::UNIX_SOCKET_PATH, Port: @port })
           end
         end
