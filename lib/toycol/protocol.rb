@@ -11,6 +11,8 @@ module Toycol
     @additional_request_methods = nil
 
     class << self
+      attr_reader :protocol_name
+
       # For protocol definition
       def define(protocol_name = :default, &block)
         if @definements[protocol_name]

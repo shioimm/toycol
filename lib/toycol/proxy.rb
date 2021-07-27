@@ -18,8 +18,8 @@ module Toycol
     CHUNK_SIZE = 1024 * 16
 
     def start
-      puts <<~MESSAGE
-        [Toycol] Start proxy server running on #{@host}:#{@port}
+      logger <<~MESSAGE
+        Start proxy server on #{@protocol.protocol_name} protocol, listening on #{@host}:#{@port}
         => Use Ctrl-C to stop
       MESSAGE
 
