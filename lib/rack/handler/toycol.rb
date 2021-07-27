@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "rack"
 require "rack/handler"
 
 module Rack

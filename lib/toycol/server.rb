@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "stringio"
-
 module Toycol
   class Server
     BACKLOG    = 1024

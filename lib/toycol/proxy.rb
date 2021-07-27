@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require "socket"
-
 module Toycol
   class Proxy
     include Helper

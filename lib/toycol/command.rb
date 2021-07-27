@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require "optparse"
-require_relative "./client"
-require_relative "./template_generator"
-
 module Toycol
   class Command
     class Options
