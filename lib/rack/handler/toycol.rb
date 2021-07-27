@@ -28,11 +28,11 @@ module Rack
         def select_background_server
           case @preferred_background_server
           when "puma"
-            return "puma" if puma_requireable?
+            return "puma" if try_require_puma_handler
 
             raise LoadError, "Puma is not installed in your environment."
           when nil
-            puma_requireable? ? "puma" : "builtin"
+            try_require_puma_handler ? "puma" : "builtin"
           else
             "builtin"
           end
@@ -41,7 +41,7 @@ module Rack
           abort
         end
 
-        def puma_requireable?
+        def try_require_puma_handler
           require "rack/handler/puma"
           true
         rescue LoadError
