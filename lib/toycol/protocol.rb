@@ -12,7 +12,7 @@ module Toycol
 
     class << self
       # For protocol definition
-      def define(protocol_name = nil, &block)
+      def define(protocol_name = :default, &block)
         if @definements[protocol_name]
           raise DuplicateProtocolError,
                 "#{protocol_name || "Anonymous"} protocol has already been defined"
@@ -22,7 +22,7 @@ module Toycol
       end
 
       # For application which use the protocol
-      def use(protocol_name = nil)
+      def use(protocol_name = :default)
         @protocol_name = protocol_name
       end
 
