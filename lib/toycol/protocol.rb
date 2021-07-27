@@ -13,7 +13,7 @@ module Toycol
     class << self
       attr_reader :protocol_name
 
-      # For protocol definition
+      # For Protocolfile to define new protocol
       def define(protocol_name = :default, &block)
         if @definements[protocol_name]
           raise DuplicateProtocolError,
@@ -23,12 +23,12 @@ module Toycol
         @definements[protocol_name] = block
       end
 
-      # For application which use the protocol
+      # For application to select which protocol to use
       def use(protocol_name = :default)
         @protocol_name = protocol_name
       end
 
-      # For server which use the protocol
+      # For proxy server to interpret protocol definitions and parse messages
       def run!(message)
         @request_message = message.chomp
 
@@ -74,13 +74,14 @@ module Toycol
         end
       end
 
-      # For server: Get the request path
+      # For proxy server: Fetch the request path
       def request_path
         request_path = request.instance_variable_get("@path").call(request_message)
 
-        raise UnauthorizeError, "This request path is too long" if request_path.size >= 2048
-
-        if request_path.scan(%r{[/\w\d\-_]}).size < request_path.size
+        if request_path.size >= 2048
+          raise UnauthorizeError,
+                "This request path is too long"
+        elsif request_path.scan(%r{[/\w\d\-_]}).size < request_path.size
           raise UnauthorizeError,
                 "This request path contains unauthorized character"
         end
@@ -88,7 +89,7 @@ module Toycol
         request_path
       end
 
-      # For server: Get the request method
+      # For proxy server: Fetch the request method
       def request_method
         @http_request_methods.concat @additional_request_methods if @additional_request_methods
         request_method = request.instance_variable_get("@http_method").call(request_message)
@@ -101,21 +102,21 @@ module Toycol
         request_method
       end
 
-      # For server: Get the query string
+      # For proxy server: Fetch the query string
       def query
         return unless (parse_query_block = request.instance_variable_get("@query"))
 
         parse_query_block.call(request_message)
       end
 
-      # For server: Get the input body
+      # For proxy server: Fetch the input body
       def input
         return unless (parsed_input_block = request.instance_variable_get("@input"))
 
         parsed_input_block.call(request_message)
       end
 
-      # For server: Get the message of status code
+      # For proxy server: fetch the message of status code
       def status_message(status)
         @http_status_codes.merge!(@custom_status_codes) if @custom_status_codes
 
