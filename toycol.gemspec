@@ -27,5 +27,5 @@ Gem::Specification.new do |spec|
   spec.executables   << "toycol"
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "rack", "~> 2.0"
+  spec.add_dependency "rack", ">= 2", "< 4"
 end
